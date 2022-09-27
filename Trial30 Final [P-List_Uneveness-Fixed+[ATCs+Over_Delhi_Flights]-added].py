@@ -1,19 +1,17 @@
-### (Improve Random Case-Scenario Mech) Add Mech. to involve all case-scenarios (no code goes waste)
-#       [8-[No of cases (5)] Here first 3 can be random if all diff then proceed with random; else involve only newer cases]
-### Make Gates/Runway/Hangar Usage more realtime [FOR EACH CASE; Currently not all]
-
 import sqlite3 as sql  # Tickets Management
 from os import listdir  # File Management
 from time import sleep, ctime  # Simulation
 from csv import writer, reader  # User-Database
 from random import choice, randrange, randint  # Randomised Simulation
-from tkinter import EXCEPTION, messagebox, Tk, GROOVE, Entry  # Visualization
-from tkinter import Label, Toplevel, StringVar, Button  # Visualization
+from tkinter import messagebox, Tk, GROOVE, Entry  # Visualization
+from tkinter import Label, Toplevel, StringVar, Button
 
-__doc__ = """This is a module, created to honour the people working round the clock at the Air Traffic Control (ATC) tower, monitoring all flight activities and making air travel safe and worry free in today's contemporary world. Among the most important professions in the world, they also constitute a fair percent of GDP to acountry by facilitating air travel which in turn facilitates tourism, accomodating a large number of tourists. This module has been created by us, who aspire in being a great coder in the near future and this project is a stepping stone to them in lieu with their great future. We are the students of Grade XII of Shalom Hills Int'l School, Gurgaon and we are driven towards our interest in coding due to our CS teacher Ms. Sarika Aneja, PGT in CS.
+from sklearn.exceptions import ChangedBehaviorWarning  # Visualization
+
+__doc__ = """This is a module, created to honor the people working round the clock at the Air Traffic Control (ATC) tower, monitoring all flight activities and making air travel safe and worry free in today's contemporary world. Among the most important professions in the world, they also constitute fair percent of GDP to our country by facilitating air travel which in turn facilitates tourism, accomodating large number of tourists. This module has been created by us, who aspire in being a great coder in the near future and this project is a stepping stone to them in lieu with their great future. We are the students of Grade XII of Shalom Hills Int'l School, Gurgaon and we are driven towards our interest in coding due to our CS teacher Ms. Sarika Aneja, PGT in CS.
 - Rohan Kurup (XII-B) & Bhavya Dhoot (XII-A)"""
 
-wroval = "Please choose a valid option!" #Wrong value 
+wroval = "Please choose a valid option!" #Wrong value
 
 ###############################################################################################
 ###### File-read/write (Custom Functions) #####################################################
@@ -39,19 +37,24 @@ def w_print(st): #write
 def s_print(st): #slow
     global f
     for line in st.split('\n'):
-        # sleep(1.1)
+        sleep(1.1)
         print(line)
         f.write((line+'\n'))
+# def w_input(st):
+#     global f
+#     lines = st.split("\n")
+#     for line in st.split("\n"):
+#         if line == lines[-1]:
+#             print(line, end=""); inp = input()
+#             f.write(line+(inp+"\n"))
+#         else:
+#             print(line)
+#             f.write((line+'\n'))
+#     return inp
 def w_input(st):
     global f
-    lines = st.split("\n")
-    for line in st.split("\n"):
-        if line == lines[-1]:
-            print(line, end=""); inp = input()
-            f.write(line+(inp+"\n"))
-        else:
-            print(line)
-            f.write((line+'\n'))
+    print(st.strip(), end=""); inp = input()
+    f.write(st.strip()+(inp+"\n"))
     return inp
 
 ###############################################################################################
@@ -61,7 +64,7 @@ def ticket(flight):
     opt = w_input(f"Do you want the passanger list for {flight} (y/n): ").lower()
     if opt == 'y':
         flight = "F"+flight
-        con = sql.connect(database="rohan")
+        con = sql.connect(database="rohan.db")
         cur = con.cursor()
         try:
             c = 'CREATE TABLE '+flight+'(SNO TEXT(3),NAME TEXT(20), SEX TEXT(1), AGE TEXT(3),PASSPORT TEXT(15), RESERVATION TEXT(15))'
@@ -131,7 +134,7 @@ trips = {
         "Delhi - Dubai"     :   ["EK9219", 'B777-F1H', 'Emirates'],
         "Delhi - Bengaluru" :   ["6E2188", 'A321-251NX', 'IndiGo'],
         "Delhi - Mumbai"    :   ["6E2138", 'A321-271NX', 'IndiGo'],
-        "Delhi - Pune"      :   ["UK997", 'B737-8AL', 'Vistara'],
+        "Delhi - Pune"      :   ["UK997", 'B737-8AL', 'Vistara'], #7
 
         "Jaipur - Delhi"    :   ["6E2175", 'A320-271N', 'IndiGo'],
         "Goa - Delhi"       :   ["I5779", 'A320-214', 'AirAsia'],
@@ -139,22 +142,32 @@ trips = {
         "Dubai - Delhi"     :   ["6E23", 'A320-251N', 'IndiGo'],
         "Bengaluru - Delhi" :   ["AI803", 'A321', 'Air India'],
         "Mumbai - Delhi"    :   ["AI605", 'A321', 'Air India'],
-        "Pune - Delhi"      :   ["G8171", 'A320-271N', 'Go First'],
+        "Pune - Delhi"      :   ["G8171", 'A320-271N', 'Go First'], #7
 
-        # "Nagpur - Jammu"  :   [],
-        # "Jaipur - Haldwani" : ['G8142', "A320", 'Go First'],
-}
+        "Jaipur - Haldwani" :   ["G8-142", '32A', 'Go First'],
+        "Punjab - Lucknow"  :   ["AI0971", 'A320', 'Air India'],
+        "Dubai - Goa"      :   ["AI2341", 'A320', 'Air India'],
+        "Pune - Bengaluru"  :   ["AI247", 'A20N', 'Air India'] #4
+        }
 
 def run_gates_updater(): #Realtime Runway/Gates Usage Updater
-    global marker, count
-    if marker-count <= 1:
+    global count2, count
+    print('run_gates_updater used')
+    if count2-count <= 1:
         pass
     else:
-        ele = run_use[0]; runways.append(ele); run_use.remove(ele); runways.sort()
-        ele2 = gates_use[0]; gates.append(ele2); gates_use.remove(ele2); gates.sort()
-        marker -= 2
+        try:
+            ele = run_use[0]; runways.append(ele); run_use.remove(ele); runways.sort()
+        except:
+            pass
+        try:
+            ele2 = gates_use[0]; gates.append(ele2); gates_use.remove(ele2); gates.sort()
+        except:
+            pass
+        count2 -= 2
+        pass
 
-# Status  = ['Flight passing by', 'Request for Landing','Request for Take-off','Low on fuel. Request for refuel','Mayday! Request for emergency landing','Passenger needs medic! Request for emergency landing']
+# statuses  = ['Flight passing by. Handover to next ATC', 'Request for landing','Request for Take-off','Low on fuel. Request for refuel','Mayday! Request for emergency landing','Passenger needs medic! Request for emergency landing'] #6
 gates   = ['G-01', 'G-02', 'G-03', 'G-04', 'G-05', 'G-06', 'G-07', 'G-08', 'G-09']
 hangars = ['H1', 'H3', 'H7', 'H8', 'H11', 'H13', 'H17', 'H18']
 routes  = ['NAT 1', 'NAT 2', 'NAT 3', 'NAT 4', 'NAT 5']
@@ -189,7 +202,7 @@ def main(status, cur_flight):
                                                 if atc in atc_list:
                                                     w_print(f"Heading over to {atc_list[0]} ATC")
                                                     ticket(cur_flight)
-                                                    sleep(5); iterate = False; break
+                                                    sleep(4); iterate = False; break
                                                 
                                             else: w_print(wroval)
                                     else: w_print(wroval)
@@ -210,13 +223,13 @@ def main(status, cur_flight):
                 while iterate == True:
                     hangar = w_input("Hangars available are ("+", ".join(hangars)+"): ").upper()
                     if hangar in hangars:
-                        s_print(f'Hangar {hangar} is assigned\nSituation solved\nHangar {hangar} if occupied indefinitely')
+                        s_print(f'Hangar {hangar} is assigned\nSituation solved\nHangar {hangar} is occupied indefinitely')
                         hangars.remove(hangar)
                         ticket(cur_flight)
-                        sleep(5); iterate = False; break
+                        sleep(4); iterate = False; break
                     else: w_print(wroval)
             else: w_print(wroval)
-    elif status == 'Flight passing by':
+    elif status == 'Flight passing by. Handover to next ATC':
         iterate = True
         altitude = randrange(20000, 30000)
         w_print(f"Altitude: {altitude} ft")
@@ -230,10 +243,10 @@ def main(status, cur_flight):
                         if atc in atc_list:
                             w_print(f"Heading over to {atc.split()[0]} ATC")
                             ticket(cur_flight)
-                            sleep(5); iterate = False; break
+                            sleep(4); iterate = False; break
                     else: w_print(wroval)
             else: w_print(wroval)
-    elif status == "Request for Landing": #Complete + Checked
+    elif status == "Request for landing": #Complete + Checked
         iterate = True 
         altitude = randrange(3000, 5000)
         w_print(f"Altitude: {altitude} ft")
@@ -244,7 +257,7 @@ def main(status, cur_flight):
                 while iterate == True:
                     runway = w_input("Assign runway to land on ("+str(", ".join(runways))+"): ").upper()
                     if runway in runways:
-                        run_use.append(runway); runways.remove(runway);
+                        run_use.append(runway); runways.remove(runway)
                         s_print(f"Steady descent from {altitude} ft towards {runway}\nUpdated status: Landing in {runway}")
                         while iterate == True:
                             gate = w_input("Enter the gate to be assigned ("+", ".join(gates)+"): ").upper()
@@ -252,7 +265,7 @@ def main(status, cur_flight):
                                 gates_use.append(gate); gates.remove(gate)
                                 w_print(f"Heading to gate: {gate}")
                                 ticket(cur_flight)
-                                sleep(5); iterate = False; break
+                                sleep(4); iterate = False; break
                             else: w_print(wroval)
                     else: w_print(wroval)
             elif cmd == 'turn around': 
@@ -274,7 +287,7 @@ def main(status, cur_flight):
                         w_print(f"Heading to gate: {gate}")
                         s_print('Passenger is being treated\nPassenger is OK') #slow
                         ticket(cur_flight)
-                        sleep(5); iterate = False; break
+                        sleep(4); iterate = False; break
                     else: w_print(wroval)
             else: w_print(wroval)
     elif status == 'Low on fuel. Request for refuel':
@@ -292,35 +305,49 @@ def main(status, cur_flight):
                         gates_use.append(gate); gates.remove(gate)
                         s_print(f"Heading to gate: {gate}\nRefueling")
                         ticket(cur_flight)
-                        sleep(5); iterate = False; break
+                        sleep(4); iterate = False; break
                     else: w_print(wroval)
             else: w_print(wroval)
-def main_p():
-    global trips, count
+
+chances = [(0, 9), (10, 19), (20, 39), (40, 64), (65, 89), (90, 99)]        ######
+def main_p():                                                                    #
+    global trips, count, marker                                                  #
     s_print("\nInitiating terminal...\nEstablishing connection...\n\nAssuming role of Delhi ATC")
     s_print(f"\nHello, {username1.capitalize()}\nWelcome to your day!\n\nATC MODULE:")
-    while count >= -1:
-        if count == -1:
-            s_print("\nAll flights for the day are taken care of.\nDay Ended")
-            s_print(f"\n\nLog file exported as {a}.")
-            quit()
-        cur_trip = choice(list(trips.keys()))
-        chance = randint(10, 99) # Define chance 
+                                                                                 #
+    while count >= -1: #Last iteration                                           #
+        if count == -1: #End                                                     #
+            s_print("\nAll flights for the day are taken care of.\nDay Ended")   #
+            s_print(f"\n\nLog file exported as {a}.")                            #
+            quit()                                                               #
+                                                                                 #
+        cur_trip = choice(list(trips.keys())) #3 cases are trip independant, for special cases it's redefined
+                                                                                 #
+        if len(chances) >= 1:                                                    # To ensure
+            ini_choice = choice(chances)                                         # each case 
+            chance = choice(ini_choice)                                          # occurs (6)
+            chances.remove(ini_choice)                                      ######
+            print("if hua hai", chance, chances)
+        else:
+            chance = randint(20, 39) # Define chance
+            print("else hua hai", chance, chances)
+
         if chance >= 0 and chance <= 9: # Any Flight
             cur_stat = 'Passenger needs medic! Request for emergency landing'
         elif chance >= 10 and chance <= 19: #Any Flight
             cur_stat = 'Low on fuel. Request for refuel'
         elif chance >= 20 and chance <= 39: #Any Flight without Delhi
-            # cur_stat = 'Flight passing by. Handover to next ATC'
-            # cur_trip = choice(list(trips.keys())[15:len(trips)])
-            continue
+            print("hallo")
+            cur_stat = 'Flight passing by. Handover to next ATC'
+            cur_trip = choice(list(trips.keys())[14:len(trips)])
+            print("hallo")
         elif chance >= 40 and chance <= 64: #Flights is cur_des == 'Delhi
-            cur_stat = 'Request for Landing'
-            cur_trip = choice(list(trips.keys())[7:15])
+            cur_stat = 'Request for landing'
+            cur_trip = choice(list(trips.keys())[7:14])
         elif chance >= 65 and chance <= 89: #Flights is cur_loc == 'Delhi
             cur_stat = 'Request for Take-off'
             cur_trip = choice(list(trips.keys())[:7])
-        elif chance >= 90 and chance <= 99: #Any Flight
+        else: # (chance of 10/100) Any Trip
             cur_stat = 'Mayday! Request for emergency landing'
 
         run_gates_updater()
@@ -330,6 +357,8 @@ def main_p():
             cur_flight_type = 'International'
         w_print(f"""\nFlights for the day: {count+1}\n\nStatus: {cur_stat}\nFlight: {cur_flight}\nAirlines: {cur_flight_airlines}
 Type: {cur_flight_type}\nTrip: {cur_trip}\nModel: {cur_flight_mod}""")
+        # del trips[cur_trip]
+        print("main pohoch agya")
         main(cur_stat, cur_flight)
         count -= 1
 
@@ -365,8 +394,8 @@ def register_user():
     password_info = password.get()
     iterate = True
     while iterate == True:
+        a = "ATC_Users.csv"
         try: 
-            a = "ATC_Users.csv"
             with open(a, "a+") as g:
                 csv_w = writer(g)
                 csv_w.writerow([username_info, password_info])
@@ -374,7 +403,7 @@ def register_user():
                 f.write(f"Registration Successful. Added user: {username_info}\n")
                 screen1.destroy(); iterate = False; break   
         except:
-            with open(a, "w+") as g:
+            with open(a, "w+") as g:  #Create file with field-names
                 csv_w = writer(g)
                 csv_w.writerow(['username', 'password'])
 def register():
@@ -452,10 +481,10 @@ def about1():
     screen0.geometry("1920x1080")
     screen0.state('zoomed')
     tit_label("ABOUT THE MODULE", screen0); d_br(screen0)
-    txt_label("This is a module, created to honour the people working round the clock at the Air Traffic Control (ATC) tower,", screen0)
+    txt_label("This is a module, created to honour the people who work round the clock at the Air Traffic Control (ATC) towers,", screen0)
     txt_label("monitoring all flight activities and making air travel safe and worry free in today's contemporary world.", screen0)
-    txt_label("Among the most important professions in the world, they also constitute a fair percent of GDP to acountry", screen0)
-    txt_label("by facilitating air travel which in turn facilitates tourism, accomodating a large number of tourists.", screen0)
+    txt_label("Among the most important professions in the world, they also constitute a fair percent of GDP to our country", screen0)
+    txt_label("by facilitating air travel which in turn facilitates tourism, accommodates for a large number of tourists.", screen0)
     txt_label("This module has been created by us, who aspire in being a great coder in the near future and this project is a", screen0)
     txt_label("stepping stone to them in lieu with their great future. We are the students of Grade XII of Shalom Hills Int'l School,", screen0)
     txt_label("Gurgaon and we are driven towards our interest in coding due to our CS teacher Ms. Sarika Aneja, PGT in CS.", screen0)
@@ -477,5 +506,8 @@ def main_screen():
     screen.mainloop()
 ###^#^#^#^ Tkinter (Graphical Phase) ^#^#^#^###################################################
 
-marker = count = randint(4, 7)
+count2 = marker = count = randint(6, 9)
 main_screen()
+
+### Trips with flight detials have potnetial to repeat when same cases appear.
+### Login User not found error recuurs
