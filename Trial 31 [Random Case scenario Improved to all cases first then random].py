@@ -4,9 +4,7 @@ from time import sleep, ctime  # Simulation
 from csv import writer, reader  # User-Database
 from random import choice, randrange, randint  # Randomised Simulation
 from tkinter import messagebox, Tk, GROOVE, Entry  # Visualization
-from tkinter import Label, Toplevel, StringVar, Button
-
-from sklearn.exceptions import ChangedBehaviorWarning  # Visualization
+from tkinter import Label, Toplevel, StringVar, Button # Visualization
 
 __doc__ = """This is a module, created to honor the people working round the clock at the Air Traffic Control (ATC) tower, monitoring all flight activities and making air travel safe and worry free in today's contemporary world. Among the most important professions in the world, they also constitute fair percent of GDP to our country by facilitating air travel which in turn facilitates tourism, accomodating large number of tourists. This module has been created by us, who aspire in being a great coder in the near future and this project is a stepping stone to them in lieu with their great future. We are the students of Grade XII of Shalom Hills Int'l School, Gurgaon and we are driven towards our interest in coding due to our CS teacher Ms. Sarika Aneja, PGT in CS.
 - Rohan Kurup (XII-B) & Bhavya Dhoot (XII-A)"""
@@ -152,7 +150,6 @@ trips = {
 
 def run_gates_updater(): #Realtime Runway/Gates Usage Updater
     global count2, count
-    print('run_gates_updater used')
     if count2-count <= 1:
         pass
     else:
@@ -327,20 +324,16 @@ def main_p():                                                                   
             ini_choice = choice(chances)                                         # each case 
             chance = choice(ini_choice)                                          # occurs (6)
             chances.remove(ini_choice)                                      ######
-            print("if hua hai", chance, chances)
         else:
             chance = randint(20, 39) # Define chance
-            print("else hua hai", chance, chances)
 
         if chance >= 0 and chance <= 9: # Any Flight
             cur_stat = 'Passenger needs medic! Request for emergency landing'
         elif chance >= 10 and chance <= 19: #Any Flight
             cur_stat = 'Low on fuel. Request for refuel'
         elif chance >= 20 and chance <= 39: #Any Flight without Delhi
-            print("hallo")
             cur_stat = 'Flight passing by. Handover to next ATC'
             cur_trip = choice(list(trips.keys())[14:len(trips)])
-            print("hallo")
         elif chance >= 40 and chance <= 64: #Flights is cur_des == 'Delhi
             cur_stat = 'Request for landing'
             cur_trip = choice(list(trips.keys())[7:14])
@@ -358,7 +351,6 @@ def main_p():                                                                   
         w_print(f"""\nFlights for the day: {count+1}\n\nStatus: {cur_stat}\nFlight: {cur_flight}\nAirlines: {cur_flight_airlines}
 Type: {cur_flight_type}\nTrip: {cur_trip}\nModel: {cur_flight_mod}""")
         # del trips[cur_trip]
-        print("main pohoch agya")
         main(cur_stat, cur_flight)
         count -= 1
 
@@ -394,8 +386,8 @@ def register_user():
     password_info = password.get()
     iterate = True
     while iterate == True:
-        a = "ATC_Users.csv"
         try: 
+            a = "ATC_Users.csv"
             with open(a, "a+") as g:
                 csv_w = writer(g)
                 csv_w.writerow([username_info, password_info])
@@ -403,7 +395,7 @@ def register_user():
                 f.write(f"Registration Successful. Added user: {username_info}\n")
                 screen1.destroy(); iterate = False; break   
         except:
-            with open(a, "w+") as g:  #Create file with field-names
+            with open(a, "w+") as g:
                 csv_w = writer(g)
                 csv_w.writerow(['username', 'password'])
 def register():
@@ -431,23 +423,25 @@ def login_verify():
     global username1, username_entry1, password_entry1
     username1 = username_verify.get()
     password1 = password_verify.get()
-    del username_entry1, password_entry1
+    # del username_entry1, password_entry1
     list_of_files = listdir()
     a = "ATC_Users.csv"
     if a in list_of_files:
         with open(a, 'r+') as g:
             database = reader(g)
             database = list(database)
-            for user in database:
+            for user in database: #Linked list [[U1, P1], [U2, P2]]
                 try:
                     if user[0] == username1: # Username exists
                         if user[1] == password1:
                             login_sucess()
                             break
-                        else: password_not_recognised()
-                    else: user_not_found()
+                        else: 
+                            password_not_recognised()
+                            break
                 except:
                     pass
+            else: user_not_found()
     else: user_not_found() # No registrations yet
 button_font = "OCR A Extended"
 label_font = ""
@@ -511,3 +505,4 @@ main_screen()
 
 ### Trips with flight detials have potnetial to repeat when same cases appear.
 ### Login User not found error recuurs
+### Registration Fix (CSV FORMAT)
