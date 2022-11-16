@@ -48,8 +48,7 @@ def w_input(st):
 ###############################################################################################
 def ticket(flight):
     opt = w_input(f"Do you want the passanger list for {flight} (y/n): ").lower()
-    print(opt)
-    if opt:
+    if opt or opt == "":
         flight = "F"+flight
         con = sql.connect(database="rohan.db")
         cur = con.cursor()
@@ -300,7 +299,8 @@ def main_p():                                                                   
     while count >= -1: #Last iteration                                           #
         if count == -1: #End                                                     #
             s_print("\nAll flights for the day are taken care of.\nDay Ended")   #
-            s_print(f"\n\nLog file exported as {a}.")                            #
+            s_print(f"\n\nLog file exported as {a}")                             #
+            f.close()                                                            #
             quit()                                                               #
         cur_trip = choice(list(trips.keys())) #3 cases are trip independant, for special cases it's redefined
         if len(chances) >= 1:                                                    #
@@ -413,16 +413,15 @@ def login_verify():
             database = reader(g)
             database = list(database)
             for user in database: #Linked list [[U1, P1], [U2, P2]]
-                try:
-                    if user[0] == username1: # Username exists
-                        if user[1] == password1:
-                            login_sucess()
-                            break
-                        else: 
-                            password_not_recognised()
-                            break
-                except:
-                    pass
+                if user[0] == username1: # Username exists
+                    if user[1] == password1:
+                        login_sucess()
+                        break
+                    else: 
+                        password_not_recognised()
+                        break
+                else:
+                    continue
             else: user_not_found()
     else: user_not_found() # No registrations yet
 button_font = "OCR A Extended"
@@ -485,5 +484,5 @@ def main_screen():
 count2 = marker = count = 6
 main_screen()
 
-### Trips with flight detials have potnetial to repeat when same cases appear.
-#01-10-22 (FINAL)
+### Trips with flight detials have potential to repeat when same cases appear.
+#08-11-22 (FINAL)
