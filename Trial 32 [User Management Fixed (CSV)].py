@@ -1,10 +1,10 @@
 import sqlite3 as sql  # Tickets Management
+from csv import reader, writer  # User-Database
 from os import listdir  # File Management
-from time import sleep, ctime  # Simulation
-from csv import writer, reader  # User-Database
-from random import choice, randrange, randint  # Randomised Simulation
-from tkinter import messagebox, Tk, GROOVE, Entry  # Visualization
-from tkinter import Label, Toplevel, StringVar, Button # Visualization
+from random import choice, randint, randrange  # Randomised Simulation
+from time import ctime, sleep  # Simulation
+from tkinter import (GROOVE, Button, Entry, Label, StringVar,  # Visualization
+                     Tk, Toplevel, messagebox)
 
 __doc__ = """This is a module, created to honor the people working round the clock at the Air Traffic Control (ATC) tower, monitoring all flight activities and making air travel safe and worry free in today's contemporary world. Among the most important professions in the world, they also constitute fair percent of GDP to our country by facilitating air travel which in turn facilitates tourism, accomodating large number of tourists. This module has been created by us, who aspire in being a great coder in the near future and this project is a stepping stone to them in lieu with their great future. We are the students of Grade XII of Shalom Hills Int'l School, Gurgaon and we are driven towards our interest in coding due to our CS teacher Ms. Sarika Aneja, PGT in CS.
 - Rohan Kurup (XII-B) & Bhavya Dhoot (XII-A)"""
@@ -24,8 +24,7 @@ def logs(): #Initiate txt file if does not exist
             f = open(a, "r+")
             f.write(timestamper+'\n\n'); break
         except:
-            with open(a, "w") as f:
-                pass
+            with open(a, "w") as f: pass
 logs()
 def w_print(st): #write
     global f
@@ -35,20 +34,9 @@ def w_print(st): #write
 def s_print(st): #slow
     global f
     for line in st.split('\n'):
-        sleep(1.1)
+        sleep(0.3)
         print(line)
         f.write((line+'\n'))
-# def w_input(st):
-#     global f
-#     lines = st.split("\n")
-#     for line in st.split("\n"):
-#         if line == lines[-1]:
-#             print(line, end=""); inp = input()
-#             f.write(line+(inp+"\n"))
-#         else:
-#             print(line)
-#             f.write((line+'\n'))
-#     return inp
 def w_input(st):
     global f
     print(st.strip(), end=""); inp = input()
@@ -60,7 +48,8 @@ def w_input(st):
 ###############################################################################################
 def ticket(flight):
     opt = w_input(f"Do you want the passanger list for {flight} (y/n): ").lower()
-    if opt == 'y':
+    print(opt)
+    if opt:
         flight = "F"+flight
         con = sql.connect(database="rohan.db")
         cur = con.cursor()
@@ -68,20 +57,18 @@ def ticket(flight):
             c = 'CREATE TABLE '+flight+'(SNO TEXT(3),NAME TEXT(20), SEX TEXT(1), AGE TEXT(3),PASSPORT TEXT(15), RESERVATION TEXT(15))'
             cur.execute(c)
         except:
-            c = 'DELETE FROM ' + flight
+            c = 'DELETE FROM ' +flight
             cur.execute(c)
         for a in range(1, randint(80, 201)):  # s.no=no. of passengers
             b = randint(1, 2)
-            if b == 1:
-                b = chr(70)
-            else:
-                b = chr(77)
+            if b == 1: b = chr(70)
+            else: b = chr(77)
             if b == chr(70):  # name for girl
-                namelst = ['Aadhya', 'Aanya', 'Aarna', 'Advika', 'Bhavna', 'Brinda', 'Binita', 'Chhaya', 'Chakrika', 'Chara', 'Daksha', 'Dhriti', 'Darika', 'Ekaja', 'Ela', 'Estaa', 'Eshika', 'Eshana', 'Ekiya', 'Forum', 'Falak', 'Geetika', 'Gayathri', 'Gulika', 'Hiral', 'Hemangini', 'Hemal', 'Ishani', 'Idika', 'Jeevika', 'Jiera', 'Kashvi', 'Krisha', 'Kalki', 'Laasya', 'Lekha', 'Mihika', 'Maira', 'Nyra', 'Oorvi', 'Oishi', 'Pihu', 'Prisha', 'Ridhi', 'Rabhya', 'Saira', 'Shravya', 'Turvi', 'Yashica', 'Vrinda']
-                n2 = randint(0, 49)
-                name = namelst[n2]
+                namelst = ['Aadhya', 'Aanya', 'Aarna', 'Advika', 'Bhavna', 'Binita', 'Brinda', 'Chakrika', 'Chara', 'Chhaya', 'Daksha', 'Darika', 'Dhriti', 'Ekaja', 'Ekiya', 'Ela', 'Eshana', 'Eshika', 'Estaa', 'Falak', 'Forum', 'Gayathri', 'Geetika', 'Gulika', 'Hemal', 'Hemangini', 'Hiral', 'Idika', 'Ishani', 'Jeevika', 'Jiera', 'Kalki', 'Kashvi', 'Krisha', 'Laasya', 'Lekha', 'Maira', 'Mihika', 'Nyra', 'Oishi', 'Oorvi', 'Pihu', 'Prisha', 'Rabhya', 'Ridhi', 'Saira', 'Shravya', 'Turvi', 'Vrinda', 'Yashica']
+                n2 = randint(0, 49) 
+                name = namelst[n2] #random no for index
             else:  # name for boy
-                namelst = ['Aakav', 'Aakesh', 'Aarav', 'Advik', 'Chaitanya', 'Chandran', 'Darsh', 'Darpan', 'Ekansh', 'Evak', 'Girik', 'Hredhaan', 'Hemang', 'Inesh', 'Ishaan', 'Jairaj', 'Jihan', 'Lekh', 'Lohit', 'Manbir', 'Mayan', 'Meet', 'Nishit', 'Nihal', 'Onkar', 'Onveer', 'Oviyan', 'Parijat', 'Pranjal', 'Pranit', 'Raghav', 'Rayaan', 'Ronit', 'Reyansh', 'Samaksh', 'Samesh', 'Sanket', 'Sanat', 'Tuhin', 'Tejas', 'Trijal', 'Umang', 'Udarsh', 'Viraj', 'Vaidik', 'Vedant', 'Yash', 'Yatin', 'Yagnesh', 'Yumraj']
+                namelst = ['Aakav', 'Aakesh', 'Aarav', 'Advik', 'Chaitanya', 'Chandran', 'Darpan', 'Darsh', 'Ekansh', 'Evak', 'Girik', 'Hemang', 'Hredhaan', 'Inesh', 'Ishaan', 'Jairaj', 'Jihan', 'Lekh', 'Lohit', 'Manbir', 'Mayan', 'Meet', 'Nihal', 'Nishit', 'Onkar', 'Onveer', 'Oviyan', 'Parijat', 'Pranit', 'Pranjal', 'Raghav', 'Rayaan', 'Reyansh', 'Ronit', 'Samaksh', 'Samesh', 'Sanat', 'Sanket', 'Tejas', 'Trijal', 'Tuhin', 'Udarsh', 'Umang', 'Vaidik', 'Vedant', 'Viraj', 'Yagnesh', 'Yash', 'Yatin', 'Yumraj']
                 n2 = randint(0, 49)
                 name = namelst[n2]
             age2 = str(randint(0, 80))
@@ -92,7 +79,6 @@ def ticket(flight):
             t = randint(65, 90)
             uv = str(randint(10, 99))
             pp = chr(g)+hijklmn+chr(o)+pqrs+chr(t)+uv  # random-passports
-
             g1 = randint(65, 90)
             hijklmn1 = str(randint(1000000, 9999999))
             o1 = randint(65, 90)
@@ -108,17 +94,25 @@ def ticket(flight):
         qwe3 = 'SELECT * FROM '+flight
         cur.execute(qwe3)
         qwe4 = cur.fetchall()
-        w_print('*'*117)
-        print("%5s" % "S.no", "%20s" % "Name", "%10s" % "Sex", "%15s" % "Age", '%30s' % 'Passport Number', '%30s' % 'Reservation Number')
+        if opt == 'y':
+            print('*'*117)
+            print("%5s" % "S.no", "%20s" % "Name", "%10s" % "Sex", "%15s" % "Age", '%30s' % 'Passport Number', '%30s' % 'Reservation Number') #txt formatting
+        f.write('*'*117+'\n')
         a1 = ("%5s" % "S.no", "%20s" % "Name", "%10s" % "Sex", "%15s" % "Age", '%30s' % 'Passport Number', '%30s' % 'Reservation Number')
         f.writelines(a1); f.write("\n")
-        w_print('*'*117)
+        f.write('*'*117+'\n')
+        if opt == "y":
+            print('*'*117+'\n')
         
         for i in qwe4:
-            print("%5s" % i[0], "%20s" % i[1], "%10s" % i[2], "%15s" % i[3], "%30s" % i[4], "%30s" % i[5])
+            if opt == "y":
+                print("%5s" % i[0], "%20s" % i[1], "%10s" % i[2], "%15s" % i[3], "%30s" % i[4], "%30s" % i[5])
             a2 = ("%5s" % i[0], "%20s" % i[1], "%10s" % i[2], "%15s" % i[3], "%30s" % i[4], "%30s" % i[5])
             f.writelines(a2); f.write("\n")
-            w_print('-'*117)
+            if opt == "y":
+                print('-'*117)
+            f.write('-'*117+'\n')
+            
 ###^#^#^#^ SQL (Passenger's List Generator) ^#^#^#^############################################
 
 ###############################################################################################
@@ -150,28 +144,20 @@ trips = {
 
 def run_gates_updater(): #Realtime Runway/Gates Usage Updater
     global count2, count
-    if count2-count <= 1:
-        pass
+    if count2-count <= 1: pass
     else:
-        try:
-            ele = run_use[0]; runways.append(ele); run_use.remove(ele); runways.sort()
-        except:
-            pass
-        try:
-            ele2 = gates_use[0]; gates.append(ele2); gates_use.remove(ele2); gates.sort()
-        except:
-            pass
-        count2 -= 2
-        pass
+        try:    ele = run_use[0]; runways.append(ele); run_use.remove(ele); runways.sort()
+        except: pass
+        try:    ele2 = gates_use[0]; gates.append(ele2); gates_use.remove(ele2); gates.sort()
+        except: pass; count2 -= 2; pass
 
-# statuses  = ['Flight passing by. Handover to next ATC', 'Request for landing','Request for Take-off','Low on fuel. Request for refuel','Mayday! Request for emergency landing','Passenger needs medic! Request for emergency landing'] #6
-gates   = ['G-01', 'G-02', 'G-03', 'G-04', 'G-05', 'G-06', 'G-07', 'G-08', 'G-09']
-hangars = ['H1', 'H3', 'H7', 'H8', 'H11', 'H13', 'H17', 'H18']
-routes  = ['NAT 1', 'NAT 2', 'NAT 3', 'NAT 4', 'NAT 5']
-runways = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R8', 'R9']
-run_use = []
+gates     = ['G-01', 'G-02', 'G-03', 'G-04', 'G-05', 'G-06', 'G-07', 'G-08', 'G-09']
+hangars   = ['H1', 'H3', 'H7', 'H8', 'H11', 'H13', 'H17', 'H18']
+routes    = ['NAT 1', 'NAT 2', 'NAT 3', 'NAT 4', 'NAT 5']
+runways   = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R8', 'R9']
+run_use   = []
 gates_use = []
-ATCs    = ["Lucknow-LUK", "Jaipur-JAI", "Goa-GOI", "Nagpur-NAG", "Dubai-DXB", "Bengaluru-BLR", "Mumbai-BOM", "Pune-PNQ"]
+ATCs      = ["Lucknow-LUK", "Jaipur-JAI", "Goa-GOI", "Nagpur-NAG", "Dubai-DXB", "Bengaluru-BLR", "Mumbai-BOM", "Pune-PNQ"]
 def main(status, cur_flight):
     if status == "Request for Take-off": #Complete + Checked
         iterate = True
@@ -199,7 +185,7 @@ def main(status, cur_flight):
                                                 if atc in atc_list:
                                                     w_print(f"Heading over to {atc_list[0]} ATC")
                                                     ticket(cur_flight)
-                                                    sleep(4); iterate = False; break
+                                                    sleep(0.3); iterate = False; break
                                                 
                                             else: w_print(wroval)
                                     else: w_print(wroval)
@@ -223,10 +209,10 @@ def main(status, cur_flight):
                         s_print(f'Hangar {hangar} is assigned\nSituation solved\nHangar {hangar} is occupied indefinitely')
                         hangars.remove(hangar)
                         ticket(cur_flight)
-                        sleep(4); iterate = False; break
+                        sleep(0.3); iterate = False; break
                     else: w_print(wroval)
             else: w_print(wroval)
-    elif status == 'Flight passing by. Handover to next ATC':
+    elif status == 'Flight passing by. Handover to next ATC': #Complete + Checked
         iterate = True
         altitude = randrange(20000, 30000)
         w_print(f"Altitude: {altitude} ft")
@@ -240,7 +226,7 @@ def main(status, cur_flight):
                         if atc in atc_list:
                             w_print(f"Heading over to {atc.split()[0]} ATC")
                             ticket(cur_flight)
-                            sleep(4); iterate = False; break
+                            sleep(0.3); iterate = False; break
                     else: w_print(wroval)
             else: w_print(wroval)
     elif status == "Request for landing": #Complete + Checked
@@ -262,7 +248,7 @@ def main(status, cur_flight):
                                 gates_use.append(gate); gates.remove(gate)
                                 w_print(f"Heading to gate: {gate}")
                                 ticket(cur_flight)
-                                sleep(4); iterate = False; break
+                                sleep(0.3); iterate = False; break
                             else: w_print(wroval)
                     else: w_print(wroval)
             elif cmd == 'turn around': 
@@ -284,10 +270,10 @@ def main(status, cur_flight):
                         w_print(f"Heading to gate: {gate}")
                         s_print('Passenger is being treated\nPassenger is OK') #slow
                         ticket(cur_flight)
-                        sleep(4); iterate = False; break
+                        sleep(0.3); iterate = False; break
                     else: w_print(wroval)
             else: w_print(wroval)
-    elif status == 'Low on fuel. Request for refuel':
+    elif status == 'Low on fuel. Request for refuel': #Complete + Checked
         iterate = True
         altitude = randrange(3000, 5000)
         w_print(f"Altitude: {altitude} ft")
@@ -302,10 +288,9 @@ def main(status, cur_flight):
                         gates_use.append(gate); gates.remove(gate)
                         s_print(f"Heading to gate: {gate}\nRefueling")
                         ticket(cur_flight)
-                        sleep(4); iterate = False; break
+                        sleep(0.3); iterate = False; break
                     else: w_print(wroval)
             else: w_print(wroval)
-
 chances = [(0, 9), (10, 19), (20, 39), (40, 64), (65, 89), (90, 99)]        ######
 def main_p():                                                                    #
     global trips, count, marker                                                  #
@@ -317,16 +302,13 @@ def main_p():                                                                   
             s_print("\nAll flights for the day are taken care of.\nDay Ended")   #
             s_print(f"\n\nLog file exported as {a}.")                            #
             quit()                                                               #
-                                                                                 #
         cur_trip = choice(list(trips.keys())) #3 cases are trip independant, for special cases it's redefined
-                                                                                 #
-        if len(chances) >= 1:                                                    # To ensure
-            ini_choice = choice(chances)                                         # each case 
-            chance = choice(ini_choice)                                          # occurs (6)
-            chances.remove(ini_choice)                                      ######
-        else:
-            chance = randint(20, 39) # Define chance
-
+        if len(chances) >= 1:                                                    #
+            ini_choice = choice(chances)                                         #
+            chance = choice(ini_choice)                                          # To ensure
+            chances.remove(ini_choice)                                           # each case
+        else:                                                                    # occurs(6)
+            chance = randint(20, 39) # Define chance                        ######
         if chance >= 0 and chance <= 9: # Any Flight
             cur_stat = 'Passenger needs medic! Request for emergency landing'
         elif chance >= 10 and chance <= 19: #Any Flight
@@ -354,9 +336,9 @@ Type: {cur_flight_type}\nTrip: {cur_trip}\nModel: {cur_flight_mod}""")
         main(cur_stat, cur_flight)
         count -= 1
 
-###############################################################################################
-########## Tkinter (Grphical Phase) ###########################################################
-###############################################################################################
+################################################################################################
+########## Tkinter (Grphical Phase) ############################################################
+################################################################################################
 
 ########## (reduce code redunduncy) ############################################################
 def br(*screen, m=1):                                                                          #
@@ -386,16 +368,16 @@ def register_user():
     password_info = password.get()
     iterate = True
     while iterate == True:
+        a = "ATC_Users.csv"
         try: 
-            a = "ATC_Users.csv"
-            with open(a, "a+") as g:
+            with open(a, "a+", newline="") as g:
                 csv_w = writer(g)
                 csv_w.writerow([username_info, password_info])
                 messagebox.showinfo('Registration Complete', 'User registered successfully.')
                 f.write(f"Registration Successful. Added user: {username_info}\n")
                 screen1.destroy(); iterate = False; break   
         except:
-            with open(a, "w+") as g:
+            with open(a, "w+", newline="") as g:  #Create file with field-names
                 csv_w = writer(g)
                 csv_w.writerow(['username', 'password'])
 def register():
@@ -500,9 +482,8 @@ def main_screen():
     screen.mainloop()
 ###^#^#^#^ Tkinter (Graphical Phase) ^#^#^#^###################################################
 
-count2 = marker = count = randint(6, 9)
+count2 = marker = count = 6
 main_screen()
 
 ### Trips with flight detials have potnetial to repeat when same cases appear.
-### Login User not found error recuurs
-### Registration Fix (CSV FORMAT)
+#01-10-22 (FINAL)
