@@ -1,4 +1,4 @@
-import sqlite3 as sql  # Tickets Management
+import mysql.connector as sq  # Passengers per flight Management
 from csv import reader, writer  # User-Database
 from os import listdir  # File Management
 from random import choice, randint, randrange  # Randomised Simulation
@@ -16,7 +16,9 @@ wroval = "Please choose a valid option!" #Wrong value
 ###############################################################################################
 def logs(): #Initiate txt file if does not exist
     global a
+    global timestamper
     timestamper=ctime().replace(':','-')
+    
     a = f"ATC_Logs {timestamper}.txt"
     while True:
         try:
@@ -42,20 +44,40 @@ def w_input(st):
     print(st.strip(), end=""); inp = input()
     f.write(st.strip()+(inp+"\n"))
     return inp
+def mysql_strt():
+    global dbname, cur, sql_w_db
+    host = input('\nPlease enter below the required details for MYSQL CONNECTIVITY\n\nEnter host name (Leave blank for DEFAULT=localhost) :')
+    if not host: host = "localhost"
+    user = input('Enter user name (Leave blank for DEFAULT=root) :')
+    if not user: user = "root"
+    passw = input('Enter password (Leave blank for DEFAULT=1234) :')
+    if not passw: passw = "1234"
+    print('\n\n')
+    sql = sq.connect(host=host, user=user, password=passw)
+    cur = sql.cursor()
+    dbname = f"{username1}_"+timestamper.replace('-', '_').replace(' ', '_') #Database name (Username+Time)
+    while True:
+        cmd = 'create database '+dbname
+        try:
+            cur.execute(cmd)
+        except:
+            sql_w_db = sq.connect(host="localhost", user='root', password='1234', database=dbname) #sql with database
+            cur = sql_w_db.cursor()
+            break
 
 ###############################################################################################
 ########## SQL (Passenger's List Generator) ###################################################
 ###############################################################################################
 def ticket(flight):
+    
     opt = w_input(f"Do you want the passanger list for {flight} (y/n): ").lower()
     if opt or opt == "":
-        flight = "F"+flight
-        con = sql.connect(database="rohan.db")
-        cur = con.cursor()
+        flight = "F_"+flight
         try:
             c = 'CREATE TABLE '+flight+'(SNO TEXT(3),NAME TEXT(20), SEX TEXT(1), AGE TEXT(3),PASSPORT TEXT(15), RESERVATION TEXT(15))'
             cur.execute(c)
         except:
+            pass
             c = 'DELETE FROM ' +flight
             cur.execute(c)
         for a in range(1, randint(80, 201)):  # s.no=no. of passengers
@@ -89,7 +111,7 @@ def ticket(flight):
             qwe2 = "INSERT INTO "+flight+' VALUES' + \
                 '('+str(a)+',"'+name+'","'+b+'",'+age2+',"'+pp+'","'+pp1+'")'
             cur.execute(qwe2)
-            con.commit()
+            sql_w_db.commit()
         qwe3 = 'SELECT * FROM '+flight
         cur.execute(qwe3)
         qwe4 = cur.fetchall()
@@ -103,14 +125,15 @@ def ticket(flight):
         if opt == "y":
             print('*'*117+'\n')
         
-        for i in qwe4:
-            if opt == "y":
-                print("%5s" % i[0], "%20s" % i[1], "%10s" % i[2], "%15s" % i[3], "%30s" % i[4], "%30s" % i[5])
-            a2 = ("%5s" % i[0], "%20s" % i[1], "%10s" % i[2], "%15s" % i[3], "%30s" % i[4], "%30s" % i[5])
-            f.writelines(a2); f.write("\n")
-            if opt == "y":
-                print('-'*117)
-            f.write('-'*117+'\n')
+        if qwe4:
+            for i in qwe4:
+                if opt == "y":
+                    print("%5s" % i[0], "%20s" % i[1], "%10s" % i[2], "%15s" % i[3], "%30s" % i[4], "%30s" % i[5])
+                a2 = ("%5s" % i[0], "%20s" % i[1], "%10s" % i[2], "%15s" % i[3], "%30s" % i[4], "%30s" % i[5])
+                f.writelines(a2); f.write("\n")
+                if opt == "y":
+                    print('-'*117)
+                f.write('-'*117+'\n')
             
 ###^#^#^#^ SQL (Passenger's List Generator) ^#^#^#^############################################
 
@@ -301,6 +324,7 @@ def main_p():                                                                   
             s_print("\nAll flights for the day are taken care of.\nDay Ended")   #
             s_print(f"\n\nLog file exported as {a}")                             #
             f.close()                                                            #
+            sleep(8)                                                             #
             quit()                                                               #
         cur_trip = choice(list(trips.keys())) #3 cases are trip independant, for special cases it's redefined
         if len(chances) >= 1:                                                    #
@@ -332,7 +356,7 @@ def main_p():                                                                   
             cur_flight_type = 'International'
         w_print(f"""\nFlights for the day: {count+1}\n\nStatus: {cur_stat}\nFlight: {cur_flight}\nAirlines: {cur_flight_airlines}
 Type: {cur_flight_type}\nTrip: {cur_trip}\nModel: {cur_flight_mod}""")
-        # del trips[cur_trip]
+        del trips[cur_trip]
         main(cur_stat, cur_flight)
         count -= 1
 
@@ -356,6 +380,7 @@ def login_sucess():
     messagebox.showinfo('Login Successful','User logged in successfully! Proceed to terminal...')
     screen2.destroy(); screen.destroy()
     f.write("\nLogin Successful. Proceeding to terminal\n")
+    mysql_strt()
     main_p()
 def password_not_recognised():
     messagebox.showwarning('Error', 'Incorrect password...')
@@ -481,8 +506,7 @@ def main_screen():
     screen.mainloop()
 ###^#^#^#^ Tkinter (Graphical Phase) ^#^#^#^###################################################
 
-count2 = marker = count = 6
+count2 = marker = count = 5
 main_screen()
 
-### Trips with flight detials have potential to repeat when same cases appear.
 #08-11-22 (FINAL)
